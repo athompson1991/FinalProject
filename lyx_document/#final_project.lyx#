@@ -1,0 +1,391 @@
+#LyX 2.1 created this file. For more info see http://www.lyx.org/
+\lyxformat 474
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\begin_modules
+knitr
+\end_modules
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_math auto
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 0.3cm
+\topmargin 0.3cm
+\rightmargin 0.3cm
+\bottommargin 0.3cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+CFRM 543 Final Project
+\end_layout
+
+\begin_layout Author
+Alex Thompson and Dorian Kandi
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<get_data, message = F, warning = F, echo = F, cache = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+source('E:/School Stuff/CFRM 543 - Portfolio Optimization & Asset Management/fin
+al_project_git/r_code/BTgmvLoBoxWeekly104.R')
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Introduction
+\end_layout
+
+\begin_layout Standard
+This project aims to both familiarize one with financial modeling packages
+ in R and to use those tools to develop a portfolio that is appealing to
+ investors.
+ The report is divided into two sections.
+\end_layout
+
+\begin_layout Standard
+In the first section, the goal is to achieve superior gains by modifying
+ two given scripts.
+ The first script works with a global minimum variance portfolio, while
+ the second script uses a maximum quadratic utility portfolio with a risk
+ aversion parameter.
+ We modify the scripts by changing some of the parameters such as the box
+ constraints, lambda value, risk measure (i.e.
+ volatility versus ES).
+ Importantly, in addition to summary plots, the results are reported using
+ a custom performance report that outputs the following:
+\end_layout
+
+\begin_layout Itemize
+Cumulative Return
+\end_layout
+
+\begin_layout Itemize
+Maximum Drawdown
+\end_layout
+
+\begin_layout Itemize
+Annulaized Sharpe Ratio
+\end_layout
+
+\begin_layout Itemize
+Annualized Mean Return
+\end_layout
+
+\begin_layout Itemize
+Annualized Mean Voltility
+\end_layout
+
+\begin_layout Itemize
+Monthly Sharpe Ratio
+\end_layout
+
+\begin_layout Itemize
+Monthly Sortino Ratio
+\end_layout
+
+\begin_layout Itemize
+Monthly Expected Shortfall
+\end_layout
+
+\begin_layout Itemize
+Stable Risk-Adjusted Return Risk Ratio (STARR)
+\end_layout
+
+\begin_layout Standard
+In the second portion of this report, we look at 145 stocks and try to find
+ the best portfolio.
+ This is done as in the first section, and both the minimum variance portfolio
+ and the maximum utility portfolio are estimated using the new data.
+\end_layout
+
+\begin_layout Section
+Analysis of Small Cap Weekly Returns
+\end_layout
+
+\begin_layout Subsection
+Global Minimum Variance Portfolio
+\end_layout
+
+\begin_layout Standard
+The data for this analysis is provided in the 
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+
+\backslash
+texttt{mpo}
+\end_layout
+
+\end_inset
+
+ package.
+ The initial script is as follows:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<weekly-gmv-initial, warning = F, message = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+library(mpo)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(PortfolioAnalytics)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(ROI)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(ROI.plugin.quadprog)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(ROI.plugin.glpk)
+\end_layout
+
+\begin_layout Plain Layout
+
+library(lattice)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+returns = smallcapW
+\end_layout
+
+\begin_layout Plain Layout
+
+MARKET = returns[ ,"Weekvwretd"]
+\end_layout
+
+\begin_layout Plain Layout
+
+returns = smallcapW[ ,1:20]
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+funds = colnames(returns)
+\end_layout
+
+\begin_layout Plain Layout
+
+pspec = portfolio.spec(assets=funds)
+\end_layout
+
+\begin_layout Plain Layout
+
+pspec.fi = add.constraint(pspec, type="full_investment")
+\end_layout
+
+\begin_layout Plain Layout
+
+pspec.lo = add.constraint(pspec.fi, type="long_only")
+\end_layout
+
+\begin_layout Plain Layout
+
+pspec.gmvLo = add.objective(pspec.lo, type="risk", name="var")
+\end_layout
+
+\begin_layout Plain Layout
+
+pspec.box = add.constraint(pspec.fi,type="box",min=0,max=.2)
+\end_layout
+
+\begin_layout Plain Layout
+
+pspec.gmvBox = add.objective(pspec.box, type="risk", name="var")
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Notice that several different portfolios are produced.
+ We will first compare the performance of the two GMV portfolios here with
+ that of the market, then see if the constraints can be changed to improve
+ performance.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = F, message = F, warning = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+charts.PerformanceSummary(ret.comb,wealth.index = T,
+\end_layout
+
+\begin_layout Plain Layout
+
+           lty = c(1,3,2), colorset = c("black","blue","red"),
+\end_layout
+
+\begin_layout Plain Layout
+
+           cex.legend = 1.3,cex.axis = 1.3)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The initial result is that the GMV portfolio with a box constraint produces
+ the greatest result.
+ This can be confirmed with the following table of performance statistics.
+ Note that the cumulative return is much greater for the box return portfolio,
+ as well as the Sharpe Ratio.
+ For both GMV portfolios, the Sharpe Ratio is greater than that of the market.
+ 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = F, message = F, warning = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+knitr::kable(gmv_perf_table)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
