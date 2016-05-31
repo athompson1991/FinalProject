@@ -461,7 +461,82 @@ Box Portfolio with Shorting
 
 \begin_layout Standard
 The initial constrained box portfolio is long only.
- Shorting can improve performance.
+ Shorting can improve performance, though the long positions must be restricted
+ further from the 20% in the given specification.
+ Here, the lower bound is effectively infinite with a -100% limit, while
+ the upper bound is a mere 7%.
+ The portfolio metrics are summarized below (comparisons are to box portfolio
+ from section 2.1.1 and market):
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = F, message = F, warning = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+knitr::kable(short_perf_table)
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Notice that, though the cumulative return is greater than that of the original
+ box constraint portfolio, the Sharpe Ratio is lesser.
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = F, message = F, warning = F>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+gmv_performance_chart <- charts.PerformanceSummary(ret_boxes,wealth.index
+ = T,
+\end_layout
+
+\begin_layout Plain Layout
+
+           lty = c(1,3,2), colorset = c("black","blue","red"),
+\end_layout
+
+\begin_layout Plain Layout
+
+           cex.legend = 1.3,cex.axis = 1.3)
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
 \end_layout
 
 \begin_layout Subsubsection
