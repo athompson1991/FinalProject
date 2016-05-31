@@ -184,6 +184,10 @@ Analysis of Small Cap Weekly Returns
 Global Minimum Variance Portfolio
 \end_layout
 
+\begin_layout Subsubsection
+Given Portfolios
+\end_layout
+
 \begin_layout Standard
 The data for this analysis is provided in the 
 \begin_inset ERT
@@ -329,7 +333,7 @@ status open
 
 \begin_layout Plain Layout
 
-charts.PerformanceSummary(ret.comb,wealth.index = T,
+charts.PerformanceSummary(ret.comb,wealth.index = T, main = "Performance",
 \end_layout
 
 \begin_layout Plain Layout
@@ -385,6 +389,79 @@ knitr::kable(gmv_perf_table)
 \end_inset
 
 
+\end_layout
+
+\begin_layout Standard
+Two metrics of interest are diversification and turnover rate.
+ We are interested in diversification because it can provide a sense of
+ how well market risk is 
+\begin_inset Quotes eld
+\end_inset
+
+diversified-out
+\begin_inset Quotes erd
+\end_inset
+
+, and turnover is important to measure because of transaction costs associated
+ with changing positions.
+ See below plot for a time series of turnover and for diversification:
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<echo = F, message = F, warning = F, fig.height = 4>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+print(div_plot, split = c(1,1,2,1))
+\end_layout
+
+\begin_layout Plain Layout
+
+print(to_plot, split = c(2,1,2,1), newpage = F)
+\end_layout
+
+\begin_layout Plain Layout
+
+knitr::kable(to_div_tbl, row.names = T, col.names = c("GMV.LO", "GMV.BOX"))
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+There are a few notable events in each chart.
+ The diversification plot for the long only GMV portfolio has a steep decline
+ toward the end of the time horizon in question.
+ In contrast, the box plot maintains a relatively stable diversification
+ value, around roughly 85% diversified.
+ Similarly, the turnover appears less extreme for the box portfolio compared
+ to the long only portfolio; the long only portfolio at one point turns
+ over more than 40% of its positions, but the box portfolio has a maximum
+ around 30%.
+ So far in the analysis, the box constrained portfolio is most appealing.
+\end_layout
+
+\begin_layout Subsubsection
+Box Portfolio with Shorting
+\end_layout
+
+\begin_layout Standard
+The initial constrained box portfolio is long only.
+ Shorting can improve performance.
 \end_layout
 
 \end_body

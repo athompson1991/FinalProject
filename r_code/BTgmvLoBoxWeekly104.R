@@ -15,7 +15,7 @@ pspec = portfolio.spec(assets=funds)
 pspec.fi = add.constraint(pspec, type="full_investment")
 pspec.lo = add.constraint(pspec.fi, type="long_only")
 pspec.gmvLo = add.objective(pspec.lo, type="risk", name="var")
-pspec.box = add.constraint(pspec.fi,type="box",min=0,max=.2)
+pspec.box = add.constraint(pspec.fi,type="box",min=0.0,max=0.2)
 pspec.gmvBox = add.objective(pspec.box, type="risk", name="var")
 
 
@@ -74,13 +74,20 @@ gmv_perf_table <- rbind( gmv_perf_table
 DIV.GMV.LO=DIV(wts.gmvLo)
 DIV.GMV.BOX=DIV(wts.gmvBox)
 DIV.comb=na.omit(merge(DIV.GMV.LO,DIV.GMV.BOX,all=F))
-div_plot <- xyplot(DIV.comb,scales=list(y="same"),main="The DIV values GMV.LO and GMV.BOX")
-ADIV.comb=sapply(DIV.comb,mean,2)
+div_plot <- xyplot(DIV.comb,scales=list(y="same"),main="Diversification")
+div_tbl  <- apply(DIV.comb, 2, mean)
+ADIV.comb=sapply(DIV.comb,mean)
 
 # Calculate the TO values for the time series of weights
 TO.GMV.LO=TO(wts.gmvLo)
 TO.GMV.BOX=TO(wts.gmvBox)
 
 TO.comb=na.omit(merge(TO.GMV.LO,TO.GMV.BOX,all=F))
-to_plot <- xyplot(TO.comb,scales=list(y="same"),main="The TO values of GMV.LO and GMV.VOX")
-ATO.comb=sapply(TO.comb,mean,2)
+to_plot <- xyplot(TO.comb,scales=list(y="same"),main="Turnover")
+to_tbl  <- apply(TO.comb, 2, mean)
+ATO.comb=sapply(TO.comb,mean)
+
+to_div_tbl <- rbind(
+  DIV = div_tbl
+  ,TO = to_tbl
+)
