@@ -464,5 +464,25 @@ The initial constrained box portfolio is long only.
  Shorting can improve performance.
 \end_layout
 
+\begin_layout Subsubsection
+GMV with Concentration Risk Aversion Parameter
+\end_layout
+
+\begin_layout Subsection
+Quadratic Utility Portfolio
+\end_layout
+
+\begin_layout Subsubsection
+Given Portfolios
+\end_layout
+
+\begin_layout Subsubsection
+Alternative Lambda Values
+\end_layout
+
+\begin_layout Section
+Analysis of 145 Stocks
+\end_layout
+
 \end_body
 \end_document
