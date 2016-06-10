@@ -4,6 +4,9 @@
 \begin_header
 \textclass article
 \use_default_options true
+\begin_modules
+knitr
+\end_modules
 \maintain_unincluded_children false
 \language english
 \language_package default
@@ -25,9 +28,10 @@
 \bibtex_command default
 \index_command default
 \paperfontsize default
+\spacing single
 \use_hyperref false
 \papersize default
-\use_geometry false
+\use_geometry true
 \use_package amsmath 1
 \use_package amssymb 1
 \use_package cancel 1
@@ -51,6 +55,10 @@
 \shortcut idx
 \color #008000
 \end_index
+\leftmargin 0.3cm
+\topmargin 0.3cm
+\rightmargin 0.3cm
+\bottommargin 0.3cm
 \secnumdepth 3
 \tocdepth 3
 \paragraph_separation indent
@@ -68,8 +76,148 @@
 
 \begin_body
 
-\begin_layout Standard
+\begin_layout Title
+CFRM 543 Final Project
+\end_layout
 
+\begin_layout Author
+Alex Thompson and Dorian Kandi
+\end_layout
+
+\begin_layout Standard
+\begin_inset ERT
+status open
+
+\begin_layout Plain Layout
+
+<<get_data, message = F, warning = F, echo = F, cache = T>>=
+\end_layout
+
+\begin_layout Plain Layout
+
+source('E:/School Stuff/CFRM 543 - Portfolio Optimization & Asset Management/fin
+al_project_git/r_code/BTgmvLoBoxWeekly104.R')
+\end_layout
+
+\begin_layout Plain Layout
+
+@
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section*
+Introduction
+\end_layout
+
+\begin_layout Standard
+This project aims to both familiarize one with financial modeling packages
+ in R and to use those tools to develop a portfolio that is appealing to
+ investors.
+ The report is divided into five sections.
+\end_layout
+
+\begin_layout Standard
+In the first section, the goal is to achieve superior gains using weekly
+ data for small cap stocks.
+ The work is divided into a global minimum variance portfolio analysis and
+ a maximum quadratic utility analysis.
+ We look into several portfolio strategies by modifying various parameters
+ such as volatility measures, box constaints, and risk tolerance.
+ Reporting consists of both summary plots and important performance statistics
+ Importantly, the results are reported using a custom performance report
+ that outputs the following:
+\end_layout
+
+\begin_layout Itemize
+Cumulative Return
+\end_layout
+
+\begin_layout Itemize
+Maximum Drawdown
+\end_layout
+
+\begin_layout Itemize
+Annulaized Sharpe Ratio
+\end_layout
+
+\begin_layout Itemize
+Annualized Mean Return
+\end_layout
+
+\begin_layout Itemize
+Annualized Mean Voltility
+\end_layout
+
+\begin_layout Itemize
+Monthly Sharpe Ratio
+\end_layout
+
+\begin_layout Itemize
+Monthly Sortino Ratio
+\end_layout
+
+\begin_layout Itemize
+Monthly Expected Shortfall
+\end_layout
+
+\begin_layout Itemize
+Stable Risk-Adjusted Return Risk Ratio (STARR)
+\end_layout
+
+\begin_layout Standard
+In the second portion of this report, we look at 145 stocks and try to find
+ the best portfolio.
+ This is done as in the first section, and both the minimum variance portfolio
+ and the maximum utility portfolio are estimated using the new data.
+\end_layout
+
+\begin_layout Section
+Analysis of Small Cap Weekly Returns
+\end_layout
+
+\begin_layout Subsection
+Global Minimum Variance (Part 1)
+\end_layout
+
+\begin_layout Subsection
+Quadratic Utility (Part 2)
+\end_layout
+
+\begin_layout Section
+Analysis of 145 Stocks and Bonds
+\end_layout
+
+\begin_layout Subsection
+Global Minimum Variance (Part 1)
+\end_layout
+
+\begin_layout Subsection
+Quadratic Utility (Part 2)
+\end_layout
+
+\begin_layout Section
+Best Portfolio Choice
+\end_layout
+
+\begin_layout Section
+Portfolio Strategies
+\end_layout
+
+\begin_layout Section
+Further Potential Analysis
+\end_layout
+
+\begin_layout Section
+\start_of_appendix
+R Script for Small Cap Weekly Returns
+\end_layout
+
+\begin_layout Section
+R Script for 145 Stocks
 \end_layout
 
 \end_body

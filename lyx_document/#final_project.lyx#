@@ -109,7 +109,7 @@ al_project_git/r_code/BTgmvLoBoxWeekly104.R')
 
 \end_layout
 
-\begin_layout Section
+\begin_layout Section*
 Introduction
 \end_layout
 
@@ -117,20 +117,19 @@ Introduction
 This project aims to both familiarize one with financial modeling packages
  in R and to use those tools to develop a portfolio that is appealing to
  investors.
- The report is divided into two sections.
+ The report is divided into five sections.
 \end_layout
 
 \begin_layout Standard
-In the first section, the goal is to achieve superior gains by modifying
- two given scripts.
- The first script works with a global minimum variance portfolio, while
- the second script uses a maximum quadratic utility portfolio with a risk
- aversion parameter.
- We modify the scripts by changing some of the parameters such as the box
- constraints, lambda value, risk measure (i.e.
- volatility versus ES).
- Importantly, in addition to summary plots, the results are reported using
- a custom performance report that outputs the following:
+In the first section, the goal is to achieve superior gains using weekly
+ data for small cap stocks.
+ The work is divided into a global minimum variance portfolio analysis and
+ a maximum quadratic utility analysis.
+ We look into several portfolio strategies by modifying various parameters
+ such as volatility measures, box constaints, and risk tolerance.
+ Reporting consists of both summary plots and important performance statistics
+ Importantly, the results are reported using a custom performance report
+ that outputs the following:
 \end_layout
 
 \begin_layout Itemize
@@ -170,8 +169,9 @@ Stable Risk-Adjusted Return Risk Ratio (STARR)
 \end_layout
 
 \begin_layout Standard
-In the second portion of this report, we look at 145 stocks and try to find
- the best portfolio.
+In the second portion of this report, we conduct a similar analysis using
+ a new dataset.
+ The new data consists of 145 stocks and bonds.
  This is done as in the first section, and both the minimum variance portfolio
  and the maximum utility portfolio are estimated using the new data.
 \end_layout
@@ -181,382 +181,44 @@ Analysis of Small Cap Weekly Returns
 \end_layout
 
 \begin_layout Subsection
-Global Minimum Variance Portfolio
-\end_layout
-
-\begin_layout Subsubsection
-Given Portfolios
-\end_layout
-
-\begin_layout Standard
-The data for this analysis is provided in the 
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-
-\backslash
-texttt{mpo}
-\end_layout
-
-\end_inset
-
- package.
- The initial script is as follows:
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-<<weekly-gmv-initial, warning = F, message = F>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-library(mpo)
-\end_layout
-
-\begin_layout Plain Layout
-
-library(PortfolioAnalytics)
-\end_layout
-
-\begin_layout Plain Layout
-
-library(ROI)
-\end_layout
-
-\begin_layout Plain Layout
-
-library(ROI.plugin.quadprog)
-\end_layout
-
-\begin_layout Plain Layout
-
-library(ROI.plugin.glpk)
-\end_layout
-
-\begin_layout Plain Layout
-
-library(lattice)
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-returns = smallcapW
-\end_layout
-
-\begin_layout Plain Layout
-
-MARKET = returns[ ,"Weekvwretd"]
-\end_layout
-
-\begin_layout Plain Layout
-
-returns = smallcapW[ ,1:20]
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-funds = colnames(returns)
-\end_layout
-
-\begin_layout Plain Layout
-
-pspec = portfolio.spec(assets=funds)
-\end_layout
-
-\begin_layout Plain Layout
-
-pspec.fi = add.constraint(pspec, type="full_investment")
-\end_layout
-
-\begin_layout Plain Layout
-
-pspec.lo = add.constraint(pspec.fi, type="long_only")
-\end_layout
-
-\begin_layout Plain Layout
-
-pspec.gmvLo = add.objective(pspec.lo, type="risk", name="var")
-\end_layout
-
-\begin_layout Plain Layout
-
-pspec.box = add.constraint(pspec.fi,type="box",min=0,max=.2)
-\end_layout
-
-\begin_layout Plain Layout
-
-pspec.gmvBox = add.objective(pspec.box, type="risk", name="var")
-\end_layout
-
-\begin_layout Plain Layout
-
-@
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Notice that several different portfolios are produced.
- We will first compare the performance of the two GMV portfolios here with
- that of the market, then see if the constraints can be changed to improve
- performance.
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-<<echo = F, message = F, warning = F>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-charts.PerformanceSummary(ret.comb,wealth.index = T, main = "Performance",
-\end_layout
-
-\begin_layout Plain Layout
-
-           lty = c(1,3,2), colorset = c("black","blue","red"),
-\end_layout
-
-\begin_layout Plain Layout
-
-           cex.legend = 1.3,cex.axis = 1.3)
-\end_layout
-
-\begin_layout Plain Layout
-
-@
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-The initial result is that the GMV portfolio with a box constraint produces
- the greatest result.
- This can be confirmed with the following table of performance statistics.
- Note that the cumulative return is much greater for the box return portfolio,
- as well as the Sharpe Ratio.
- For both GMV portfolios, the Sharpe Ratio is greater than that of the market.
- 
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-<<echo = F, message = F, warning = F>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-knitr::kable(gmv_perf_table)
-\end_layout
-
-\begin_layout Plain Layout
-
-@
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Two metrics of interest are diversification and turnover rate.
- We are interested in diversification because it can provide a sense of
- how well market risk is 
-\begin_inset Quotes eld
-\end_inset
-
-diversified-out
-\begin_inset Quotes erd
-\end_inset
-
-, and turnover is important to measure because of transaction costs associated
- with changing positions.
- See below plot for a time series of turnover and for diversification:
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-<<echo = F, message = F, warning = F, fig.height = 4>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-print(div_plot, split = c(1,1,2,1))
-\end_layout
-
-\begin_layout Plain Layout
-
-print(to_plot, split = c(2,1,2,1), newpage = F)
-\end_layout
-
-\begin_layout Plain Layout
-
-knitr::kable(to_div_tbl, row.names = T, col.names = c("GMV.LO", "GMV.BOX"))
-\end_layout
-
-\begin_layout Plain Layout
-
-@
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-There are a few notable events in each chart.
- The diversification plot for the long only GMV portfolio has a steep decline
- toward the end of the time horizon in question.
- In contrast, the box plot maintains a relatively stable diversification
- value, around roughly 85% diversified.
- Similarly, the turnover appears less extreme for the box portfolio compared
- to the long only portfolio; the long only portfolio at one point turns
- over more than 40% of its positions, but the box portfolio has a maximum
- around 30%.
- So far in the analysis, the box constrained portfolio is most appealing.
-\end_layout
-
-\begin_layout Subsubsection
-Box Portfolio with Shorting
-\end_layout
-
-\begin_layout Standard
-The initial constrained box portfolio is long only.
- Shorting can improve performance, though the long positions must be restricted
- further from the 20% in the given specification.
- Here, the lower bound is effectively infinite with a -100% limit, while
- the upper bound is a mere 7%.
- The portfolio metrics are summarized below (comparisons are to box portfolio
- from section 2.1.1 and market):
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-<<echo = F, message = F, warning = F>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-knitr::kable(short_perf_table)
-\end_layout
-
-\begin_layout Plain Layout
-
-@
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Standard
-Notice that, though the cumulative return is greater than that of the original
- box constraint portfolio, the Sharpe Ratio is lesser.
-\begin_inset Newline newline
-\end_inset
-
-
-\begin_inset ERT
-status open
-
-\begin_layout Plain Layout
-
-<<echo = F, message = F, warning = F>>=
-\end_layout
-
-\begin_layout Plain Layout
-
-gmv_performance_chart <- charts.PerformanceSummary(ret_boxes,wealth.index
- = T,
-\end_layout
-
-\begin_layout Plain Layout
-
-           lty = c(1,3,2), colorset = c("black","blue","red"),
-\end_layout
-
-\begin_layout Plain Layout
-
-           cex.legend = 1.3,cex.axis = 1.3)
-\end_layout
-
-\begin_layout Plain Layout
-
-\end_layout
-
-\begin_layout Plain Layout
-
-@
-\end_layout
-
-\end_inset
-
-
-\end_layout
-
-\begin_layout Subsubsection
-GMV with Concentration Risk Aversion Parameter
+Global Minimum Variance (Part 1)
 \end_layout
 
 \begin_layout Subsection
-Quadratic Utility Portfolio
-\end_layout
-
-\begin_layout Subsubsection
-Given Portfolios
-\end_layout
-
-\begin_layout Subsubsection
-Alternative Lambda Values
+Quadratic Utility (Part 2)
 \end_layout
 
 \begin_layout Section
-Analysis of 145 Stocks
+Analysis of 145 Stocks and Bonds
+\end_layout
+
+\begin_layout Subsection
+Global Minimum Variance (Part 1)
+\end_layout
+
+\begin_layout Subsection
+Quadratic Utility (Part 2)
+\end_layout
+
+\begin_layout Section
+Best Portfolio Choice
+\end_layout
+
+\begin_layout Section
+Portfolio Strategies
+\end_layout
+
+\begin_layout Section
+Further Potential Analysis
+\end_layout
+
+\begin_layout Section
+\start_of_appendix
+R Script for Small Cap Weekly Returns
+\end_layout
+
+\begin_layout Section
+R Script for 145 Stocks
 \end_layout
 
 \end_body
