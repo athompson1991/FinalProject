@@ -1,14 +1,16 @@
 library(mpo)
 library(PortfolioAnalytics)
+library(factorAnalytics)
 library(ROI)
 library(ROI.plugin.quadprog)
 library(ROI.plugin.glpk)
 library(lattice)
 
+
 custom_table_report <- function(returns){
   perf <- c(
-    cumulative_returns = Return.cumulative(returns)
-    ,annualized_returns = Return.annualized(returns)
+     cumulative_returns = Return.cumulative(returns)
+    ,annualized_returns_geometric = Return.annualized(returns)
     ,max_drawdown = maxDrawdown(returns)
     ,annualized_returns_nongeometric = Return.annualized(returns, geometric = F)
     ,annualized_standard_deviation = StdDev.annualized(returns)
@@ -40,17 +42,19 @@ get_div_and_to <- function(wts_ls){
   list(div = div_vals, trn_ov = to_vals, div_plots = div_plots, to_plots = to_plots, stats_df = stats_df)
 }
 
-do_portfolio_calc <- function(returns, specs_ls, roll_window = 104, rebalance = "weeks",opt_method = "quadprog"){
+do_portfolio_calc <- function(returns, specs_ls, roll_window = 104, rebalance = "weeks",opt_method = rep("quadprog",length(specs_ls)), ...){
   port_names <- names(specs_ls)
   out_ls <- list()
   temp_tables <- list()
   for(i in 1:length(specs_ls)){
     print(port_names[i])
     optimization <- optimize.portfolio.rebalancing(returns, specs_ls[[i]]
-                                                   ,optimize_method = opt_method, rebalance_on = rebalance
-                                                   ,training_period = roll_window, rolling_window = roll_window)
+                                                   ,optimize_method = opt_method[i], rebalance_on = rebalance
+                                                   ,training_period = roll_window, rolling_window = roll_window, ...)
     wts <- extractWeights(optimization)
-    port_returns <- Return.rebalancing(returns, wts)
+    port_returns <- Return.portfolio(returns, wts)
+    print(opt_method)
+    print(head(port_returns))
     out_ls[[i]] <- list(opt = optimization, wts = wts, returns = port_returns, perf = custom_table_report(port_returns))
   }
   names(out_ls) <- port_names
@@ -73,3 +77,13 @@ calc_ls_chart <- function(port_calc_ls){
                             cex.legend = 1.3,cex.axis = 1.3, cex.main = 1.4)
 
 }
+
+custom_portfolio_moments = function(R, portfolio) {
+  momentargs = list()
+  momentargs$mu  =  matrix(as.vector(apply(R,2,"mean")), ncol = 1)
+  momentargs$sigma  =  fitSfm(R,k=3)$Omega
+  momentargs$m3 = matrix(0, nrow=ncol(R), ncol=ncol(R)^2)
+  momentargs$m4 = matrix(0, nrow=ncol(R), ncol=ncol(R)^3)
+  return(momentargs)
+}
+

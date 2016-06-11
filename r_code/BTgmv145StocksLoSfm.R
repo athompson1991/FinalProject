@@ -15,7 +15,7 @@ custom.portfolio.moments = function(R, portfolio) {
   return(momentargs)
 }
 
-data = "stocks145bonds7.csv"
+data = "E:/School Stuff/CFRM 543 - Portfolio Optimization & Asset Management/final_project_git/data/stocks145bonds7.csv"
 retAll = read.zoo(data,sep=",",header = T,format = "%m/%d/%Y")
 ret16yr = retAll[109:300,]
 SP500 = as.xts(ret16yr[,157])
@@ -37,32 +37,32 @@ bt.gmvLoSFM <- optimize.portfolio.rebalancing(ret, pspec.gmvLo,
 
 # Extract time series of portfolio weights
 wts.gmvLoSFM = extractWeights(bt.gmvLoSFM)
-dim(wts.gmvLoSFM)
+wts.gmvLoSFM
 
-
-# Compute cumulative returns of portfolio
-GMV.LO.SFM = Return.rebalancing(ret,wts.gmvLoSFM)
-class(GMV.LO.SFM)
-class(SP500)
-
-
-# Combine GMV.LO and GMV.LO.SFM cumulative return
-ret.comb <- na.omit(merge(SP500,GMV.LO.SFM,all=F))
-names(ret.comb) = c("SP500","GMV.LO.SFM")
-
-# return analysis
-charts.PerformanceSummary(ret.comb,wealth.index = T,
-        lty = c(3,1), colorset = c("black","blue"),
-        cex.legend = 1.3,cex.axis = 1.3,cex.main = 1.3,
-        main = "145 STOCKS 1999-2014 GMV.LO SFM COVARIANCE vs SP500")
-        
-
-
-# Calculte the average DIV value
-DIV.GMV.LO.SFM=DIV(wts.gmvLoSFM)
-mean(DIV.GMV.LO.SFM)
-print(ADIV.comb)
-  
-# Calculate the average TO value
-TO.GMV.LO.SFM=TO(wts.gmvLoSFM)
-mean(TO.GMV.LO.SFM)
+# 
+# # Compute cumulative returns of portfolio
+# GMV.LO.SFM = Return.rebalancing(ret,wts.gmvLoSFM)
+# class(GMV.LO.SFM)
+# class(SP500)
+# 
+# 
+# # Combine GMV.LO and GMV.LO.SFM cumulative return
+# ret.comb <- na.omit(merge(SP500,GMV.LO.SFM,all=F))
+# names(ret.comb) = c("SP500","GMV.LO.SFM")
+# 
+# # return analysis
+# charts.PerformanceSummary(ret.comb,wealth.index = T,
+#         lty = c(3,1), colorset = c("black","blue"),
+#         cex.legend = 1.3,cex.axis = 1.3,cex.main = 1.3,
+#         main = "145 STOCKS 1999-2014 GMV.LO SFM COVARIANCE vs SP500")
+#         
+# 
+# 
+# # Calculte the average DIV value
+# DIV.GMV.LO.SFM=DIV(wts.gmvLoSFM)
+# mean(DIV.GMV.LO.SFM)
+# print(ADIV.comb)
+#   
+# # Calculate the average TO value
+# TO.GMV.LO.SFM=TO(wts.gmvLoSFM)
+# mean(TO.GMV.LO.SFM)
