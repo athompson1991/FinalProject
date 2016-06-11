@@ -119,12 +119,13 @@ es1_ls <- lapply(p_vals, function(p){
   gmes1_calcs_m104 <- do_portfolio_calc(returns, gmes1_spec_ls, roll_window = 104, rebalance = "months", opt_method = rep("glpk", 3))
   
   list(
-        gmes1_calcs_w60
-       ,gmes1_calcs_m60
-       ,gmes1_calcs_w104
-       ,gmes1_calcs_m104
+        gmes1_calcs_w60 = gmes1_calcs_w60
+       ,gmes1_calcs_m60 = gmes1_calcs_m60
+       ,gmes1_calcs_w104 = gmes1_calcs_w104
+       ,gmes1_calcs_m104 = gmes1_calcs_m104
       )
 })
+names(es1_ls) <- paste("es1", p_vals, sep = "_")
 
 
 
@@ -150,7 +151,7 @@ funds <- colnames(stocks_subset)
 port2_spec            <- portfolio.spec(assets=funds)
 port2_spec_fi         <- add.constraint(port2_spec,    type="full_investment")
 port2_spec_lo         <- add.constraint(port2_spec_fi, type="long_only")
-port2_spec_box        <- add.constraint(port2_spec_fi, type="box",min=-0.0,max=0.5)
+port2_spec_box        <- add.constraint(port2_spec_fi, type="box",min=-0.0,max=0.2)
 port2_spec_short      <- add.constraint(port2_spec,    type="box",min=-0.03,max=0.25)
 
 port2_obj_gmv         <- add.objective(port2_spec_fi,    type="risk", name="var")
@@ -158,8 +159,9 @@ port2_obj_gmvLo       <- add.objective(port2_spec_lo,    type="risk", name="var"
 port2_obj_gmvBox      <- add.objective(port2_spec_box,   type="risk", name="var")
 port2_obj_gmvBoxShort <- add.objective(port2_spec_short, type="risk", name="var")
 
-port2_obj_quLo  <- add.objective(port2_spec_lo,  type="quadratic_utility", name="var", risk_aversion = 20)
-port2_obj_quBox <- add.objective(port2_spec_box, type="quadratic_utility", name="var", risk_aversion = 20)
+port2_obj_quLo       <- add.objective(port2_spec_lo,    type="quadratic_utility", name="var", risk_aversion = 20)
+port2_obj_quBox      <- add.objective(port2_spec_box,   type="quadratic_utility", name="var", risk_aversion = 20)
+port2_obj_quBoxShort <- add.objective(port2_spec_short, type="quadratic_utility", name="var", risk_aversion = 20)
 
 gmv2_specs_list <- list(
    gmv2Lo   = port2_obj_gmvLo
@@ -172,8 +174,9 @@ gmv2_specs_list <- list(
 gmv2_calcs_m200 <- do_portfolio_calc(stocks_subset, gmv2_specs_list, roll_window = 200, rebalance = "months")
 
 qu2_specs_list <- list(
-   qu2Lo  = port2_obj_quLo
-  ,qu2Box = port2_obj_quBox
+   qu2Lo       = port2_obj_quLo
+  ,qu2Box      = port2_obj_quBox
+  ,qu2BoxShort = port2_obj_quBoxShort
 )
 
 qu2_calcs_m200 <- do_portfolio_calc(stocks_xts, qu2_specs_list, roll_window = 200, rebalance = "months")
