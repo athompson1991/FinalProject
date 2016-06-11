@@ -15,9 +15,9 @@ pspec = portfolio.spec(assets=funds)
 pspec.fi = add.constraint(pspec, type="full_investment")
 pspec.lo = add.constraint(pspec.fi, type="long_only")
 pspec.gmvLo = add.objective(pspec.lo, type="risk", name="var")
-pspec.box = add.constraint(pspec.fi,type="box",min=-0.0,max=0.2)
+pspec.box = add.constraint(pspec,type="box",min=-.03,max=0.025)
 
-pspec.gmvBox = add.objective(pspec.box, type="risk", name="var")
+pspec.gmvBox = add.objective(pspec.fi, type="risk", name="var")
 
 
 # Optimize Portfolio at Monthly Rebalancing and 5-Year Training
